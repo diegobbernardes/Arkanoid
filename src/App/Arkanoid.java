@@ -12,7 +12,7 @@ import com.senac.SimpleJava.Graphics.events.KeyboardAction;
 public class Arkanoid extends GraphicApplication {
 
 	private Bloco blocos[] = new Bloco[78];	
-	private Sprite paddle;
+	private Paddle paddle;
 	private Ball ball;
 	private int deltaY = 1;
 	private int deltaX = 1;
@@ -24,6 +24,7 @@ public class Arkanoid extends GraphicApplication {
 			blocos[i].draw(canvas);
 		}
 		ball.draw(canvas);
+		
 		paddle.draw(canvas);
 	}
 
@@ -35,8 +36,9 @@ public class Arkanoid extends GraphicApplication {
 		ball = new Ball();
 		ball.setPosition(130,180);
 		
-		paddle = new Sprite(20,3, Color.BLUE);
+		paddle = new Paddle();
 		paddle.setPosition(100,185);
+		
 		int k = 0;
 		int posBlocox = 10;
 		int posBlocoy = 0;
@@ -75,13 +77,21 @@ public class Arkanoid extends GraphicApplication {
 		if (testeLimite(pos.x,0,getResolution().width)) {
 			deltaX *= -1;
 		}
-		ball.move(deltaX, deltaY);
+		
 		
 		for (int i = 0; i < blocos.length; i++) {
 			if (blocos[i].bateu(ball)) {
 				Console.println("Bateu:" + i);
+				deltaY *= -1;
 			}
 		}
+		
+		if (paddle.bateu(ball)) {
+			Console.println("Bateu no paddle");
+			deltaY *= -1;
+		}
+		
+		ball.move(deltaX, deltaY);
 		
 		redraw();	
 		
