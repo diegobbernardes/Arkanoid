@@ -20,6 +20,7 @@ public class Arkanoid extends GraphicApplication {
 	private int deltaY = -1;
 	private int deltaX = 1;
 	private Image imagem;
+	private Image[] overlay = new Image[78];
 	private Color[] cores = { new Color(146,145,153),new Color(97,255,0),new Color(192,164,157),new Color(89,135,158),new Color(224,227,0),new Color(200,0,5) };
 	
 	@Override
@@ -28,10 +29,14 @@ public class Arkanoid extends GraphicApplication {
 		canvas.drawImage(imagem,0,0);
 		for (int i = 0; i < blocos.length; i++) {
 			blocos[i].draw(canvas);
+			blocos[i].draw(canvas);
 		}
+		canvas.drawImage(overlay[0],0,15);
 		ball.draw(canvas);
 		canvas.putText(0, 0, 10, "Lifes :");
 		canvas.putText(30, 0, 10, ""+ball.getLifes());
+		canvas.putText(150, 0, 10, "Score :");		
+		
 		paddle.draw(canvas);
 	}
 
@@ -42,6 +47,7 @@ public class Arkanoid extends GraphicApplication {
 		
 		try {
 			imagem = new Image("images/bg3.jpg");
+			overlay[0] = new Image("images/gamb.png");
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 		}
@@ -57,8 +63,8 @@ public class Arkanoid extends GraphicApplication {
 		int posBlocoy = 0;
 		for (int i = 0; i <= 5; i++){
 			for (int j = 0; j < 13; j++) {
-				blocos[k] = new Bloco(cores[i]);
-				blocos[k].setPosition(posBlocoy,posBlocox);
+				blocos[k] = new Bloco(cores[i],overlay[0]);
+				blocos[k].setPosition(posBlocoy,posBlocox);				
 				k++;
 				posBlocoy = posBlocoy + 20;
 			}

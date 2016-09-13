@@ -2,6 +2,7 @@ package App;
 
 import com.senac.SimpleJava.Graphics.Canvas;
 import com.senac.SimpleJava.Graphics.Color;
+import com.senac.SimpleJava.Graphics.Image;
 import com.senac.SimpleJava.Graphics.Point;
 import com.senac.SimpleJava.Graphics.Rect;
 import com.senac.SimpleJava.Graphics.Sprite;
@@ -10,10 +11,11 @@ public class Bloco extends Sprite {
 
 	private boolean alive = true;
 
-	public Bloco(Color cor) {
+	public Bloco(Color cor,Image img) {
+		//super(img,cor);		
 		super(18, 10, cor);
 	}
-
+	
 	public boolean bateu(Ball ball){
 		// Se o bloco nas esta vivo, nao pode bater...
 		if (!alive)
