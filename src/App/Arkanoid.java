@@ -17,10 +17,10 @@ public class Arkanoid extends GraphicApplication {
 	private Bloco blocos[] = new Bloco[78];	
 	private Paddle paddle;
 	private Ball ball;
-	private int deltaY = 1;
+	private int deltaY = -1;
 	private int deltaX = 1;
 	private Image imagem;
-	private Color[] cores = { new Color(97,255,0),new Color(192,164,157),new Color(89,135,158),new Color(224,227,0),new Color(200,0,5),new Color(146,145,153) };
+	private Color[] cores = { new Color(146,145,153),new Color(97,255,0),new Color(192,164,157),new Color(89,135,158),new Color(224,227,0),new Color(200,0,5) };
 	
 	@Override
 	protected void draw(Canvas canvas) {
@@ -30,7 +30,8 @@ public class Arkanoid extends GraphicApplication {
 			blocos[i].draw(canvas);
 		}
 		ball.draw(canvas);
-		
+		canvas.putText(0, 0, 10, "Lifes :");
+		canvas.putText(30, 0, 10, ""+ball.getLifes());
 		paddle.draw(canvas);
 	}
 
@@ -52,7 +53,7 @@ public class Arkanoid extends GraphicApplication {
 		paddle.setPosition(100,185);
 		
 		int k = 0;
-		int posBlocox = 10;
+		int posBlocox = 15;
 		int posBlocoy = 0;
 		for (int i = 0; i <= 5; i++){
 			for (int j = 0; j < 13; j++) {
@@ -94,9 +95,8 @@ public class Arkanoid extends GraphicApplication {
 		if (testeLimite(pos.x,0,getResolution().width)) {
 			deltaX *= -1;
 		}
-		if(pos.y >= 190){
-			Console.println("você morreu.");
-		}
+		if(ball.isDead(getResolution().height))
+			ball.DieInsect();
 			
 		int bateu = 0;
 		for (int i = 0; i < blocos.length; i++) {
