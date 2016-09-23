@@ -2,6 +2,8 @@ package App;
 
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import com.senac.SimpleJava.Console;
 import com.senac.SimpleJava.Graphics.Canvas;
 import com.senac.SimpleJava.Graphics.Color;
@@ -20,6 +22,7 @@ public class Arkanoid extends GraphicApplication {
 	private int deltaY = -1;
 	private int deltaX = 1;
 	private Image imagem;
+	private int score = 0;
 	private Image overlay;
 	private Color[] cores = { new Color(146,145,153),new Color(97,255,0),new Color(192,164,157),new Color(89,135,158),new Color(224,227,0),new Color(200,0,5) };
 	
@@ -31,11 +34,14 @@ public class Arkanoid extends GraphicApplication {
 			blocos[i].draw(canvas);
 			blocos[i].draw(canvas);
 		}
-		canvas.drawImage(overlay,0,15);
+		//canvas.drawImage(overlay,0,15);
+		
+		
 		ball.draw(canvas);
 		canvas.putText(0, 0, 10, "Lifes :");
 		canvas.putText(30, 0, 10, ""+ball.getLifes());
-		canvas.putText(150, 0, 10, "Score :");		
+		canvas.putText(150, 0, 10, "Score :");
+		canvas.putText(210, 0, 10, ""+score);	
 		
 		paddle.draw(canvas);
 	}
@@ -93,6 +99,13 @@ public class Arkanoid extends GraphicApplication {
 
 	@Override
 	protected void loop() {
+		if(ball.getLifes() == 0){
+			JOptionPane.showMessageDialog(null,
+				    "Suas vidas chegaram a zero\nFim de jogo.",
+				    "Batatoid",
+				    JOptionPane.ERROR_MESSAGE);	
+			System.exit(0);
+		}
 		//Testando os limites do eixo X e Y.
 		Point pos = ball.getPosition();
 		if (testeLimite(pos.y,0,getResolution().height)) {
@@ -101,14 +114,20 @@ public class Arkanoid extends GraphicApplication {
 		if (testeLimite(pos.x,0,getResolution().width)) {
 			deltaX *= -1;
 		}
-		if(ball.isDead(getResolution().height))
+		if(ball.getLifes() == 0){
+			
+		}
+		if(ball.isDead(getResolution().height)){
 			ball.DieInsect();
+			ball.setPosition(130,180);
+		}
 			
 		int bateu = 0;
 		for (int i = 0; i < blocos.length; i++) {
 			if (blocos[i].bateu(ball)) {
 				Console.println("Bateu:" + i);
 				bateu++;
+				score += 100;
 			}
 		}
 		if(bateu>0)

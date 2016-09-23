@@ -9,7 +9,7 @@ import com.senac.SimpleJava.Graphics.Sprite;
 public class Paddle extends Sprite {
 	
 	public Paddle(){
-		super(20,3, Color.BLUE);
+		super(40,3, Color.BLUE);
 	}	
 	public boolean bateu(Ball ball){
 		
