@@ -10,11 +10,15 @@ import com.senac.SimpleJava.Graphics.Sprite;
 public class Bloco extends Sprite {
 
 	private boolean alive = true;
-
-	public Bloco(Color cor,Image img) {
-		//super(img,cor);		
+	private int life = 1;
+	
+	public Bloco(Color cor) {	
 		super(18, 10, cor);
 	}
+	public Bloco(Color cor,int life) {		
+		super(18, 10, cor);
+		this.life = life;
+	}	
 	
 	public boolean bateu(Ball ball){
 		// Se o bloco nas esta vivo, nao pode bater...
@@ -43,7 +47,9 @@ public class Bloco extends Sprite {
 			return false;
 		}
 		
-		alive = false;
+		life--;
+		if(life<=0)
+			alive = false;
 		return true;
 	}
 
@@ -51,5 +57,13 @@ public class Bloco extends Sprite {
 	public void draw(Canvas canvas) {
 		if (alive)
 			super.draw(canvas);
+	}
+	public boolean isAlive() {		
+		return alive;
+	}
+	public void Die() {
+		alive = false;
+		life=0;
+		
 	}
 }

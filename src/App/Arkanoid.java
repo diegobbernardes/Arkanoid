@@ -1,6 +1,8 @@
 package App;
 
 import java.io.IOException;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
 
@@ -23,28 +25,18 @@ public class Arkanoid extends GraphicApplication {
 	private int deltaX = 1;
 	private Image imagem;
 	private int score = 0;
-	private Image overlay;
-	private Color[] cores = { new Color(146,145,153),new Color(97,255,0),new Color(192,164,157),new Color(89,135,158),new Color(224,227,0),new Color(200,0,5) };
+	private int stage = 0;
+	private Color[] coresStage = { new Color(146,145,153),new Color(97,255,0),new Color(192,164,157),new Color(89,135,158),new Color(224,227,0),new Color(200,0,5) };
 	
 	@Override
 	protected void draw(Canvas canvas) {
 		canvas.clear();
-		canvas.drawImage(imagem,0,0);
-		for (int i = 0; i < blocos.length; i++) {
-			blocos[i].draw(canvas);
-			blocos[i].draw(canvas);
-		}
-		//canvas.drawImage(overlay,0,15);
-		
-		
-		ball.draw(canvas);
-		canvas.putText(0, 0, 10, "Lifes :");
-		canvas.putText(30, 0, 10, ""+ball.getLifes());
-		canvas.putText(150, 0, 10, "Score :");
-		canvas.putText(210, 0, 10, ""+score);	
-		
+		canvas.drawImage(imagem,0,0);		
+		drawBlocosStage(canvas);				
+		ball.draw(canvas);		
+		putTexts(canvas);				
 		paddle.draw(canvas);
-	}
+	}	
 
 	@Override
 	protected void setup() {
@@ -53,7 +45,6 @@ public class Arkanoid extends GraphicApplication {
 		
 		try {
 			imagem = new Image("images/bg3.jpg");
-			overlay = new Image("images/gamb.png");
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 		}
@@ -64,19 +55,8 @@ public class Arkanoid extends GraphicApplication {
 		paddle = new Paddle();
 		paddle.setPosition(100,185);
 		
-		int k = 0;
-		int posBlocox = 15;
-		int posBlocoy = 0;
-		for (int i = 0; i <= 5; i++){
-			for (int j = 0; j < 13; j++) {
-				blocos[k] = new Bloco(cores[i],overlay);
-				blocos[k].setPosition(posBlocoy,posBlocox);				
-				k++;
-				posBlocoy = posBlocoy + 20;
-			}
-			posBlocoy = 0;
-			posBlocox = posBlocox + 12;
-		}		
+		setBlocosStage();
+				
 		bindKeyPressed("LEFT", new KeyboardAction() {
 			@Override			
 			public void handleEvent() {
@@ -95,10 +75,22 @@ public class Arkanoid extends GraphicApplication {
 					paddle.move(5, 0);
 			}
 		});
-	}
+		bindKeyPressed("UP", new KeyboardAction() {
+			@Override
+			public void handleEvent() {
+				for (int i = 0; i < blocos.length; i++) {
+					if(blocos[i].isAlive()){
+						blocos[i].Die();
+						score = score + 100;
+					}
+				}
+			}
+		});
+	}	
 
 	@Override
 	protected void loop() {
+		verifyStage();
 		if(ball.getLifes() == 0){
 			JOptionPane.showMessageDialog(null,
 				    "Suas vidas chegaram a zero\nFim de jogo.",
@@ -140,10 +132,77 @@ public class Arkanoid extends GraphicApplication {
 		
 		ball.move(deltaX, deltaY);
 		
-		redraw();	
+		redraw();			
 		
-		
+	}	
+
+	private void drawBlocosStage(Canvas canvas) {
+		for (int i = 0; i < blocos.length; i++) {
+			blocos[i].draw(canvas);
+			blocos[i].draw(canvas);
+		}		
 	}
+	
+	private void putTexts(Canvas canvas) {
+		canvas.putText(0, 0, 10, "Lifes :");
+		canvas.putText(30, 0, 10, ""+ball.getLifes());
+		canvas.putText(60, 0, 10, "Stage :");
+		canvas.putText(100, 0, 10, ""+(stage+1));
+		canvas.putText(150, 0, 10, "Score :");
+		canvas.putText(210, 0, 10, ""+score);			
+	}
+	
+	private void forBlocos(Color[] cores) {
+		int k = 0;
+		int posBlocox = 15;
+		int posBlocoy = 0;
+		for (int i = 0; i <= 5; i++){
+			for (int j = 0; j < 13; j++) {
+				if(i == 0){
+					blocos[k] = new Bloco(cores[i],2);
+				}else{
+					blocos[k] = new Bloco(cores[i]);
+				}
+				blocos[k].setPosition(posBlocoy,posBlocox);				
+				k++;
+				posBlocoy = posBlocoy + 20;
+			}
+			posBlocoy = 0;
+			posBlocox = posBlocox + 12;
+		}
+	}
+	
+	private void setBlocosStage() {
+				
+		forBlocos(coresStage);	
+		
+	}	
+	
+	private void verifyStage() {
+		for (int i = 0; i < blocos.length; i++) {
+			if (blocos[i].isAlive()) {
+				return;
+			}
+		}
+		stageAdvance();
+	}
+	
+	private void stageAdvance() {
+		stage = stage + 1;
+		ball.setPosition(130,180);
+		shuffleArray(coresStage);
+		setBlocosStage();
+	}
+	
+	static void shuffleArray(Color[] ar){
+		Random rnd = ThreadLocalRandom.current();
+		for (int i = ar.length - 1; i > 0; i--){
+		  int index = rnd.nextInt(i + 1);
+		      Color a = ar[index];
+		      ar[index] = ar[i];
+		      ar[i] = a;
+		    }
+	  }
 	
 	private boolean testeLimite(double pos, int min, int max) {
 		if(pos > max || pos < min) {
