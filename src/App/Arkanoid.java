@@ -27,9 +27,12 @@ public class Arkanoid extends GraphicApplication {
 	private int score = 0;
 	private int stage = 0;
 	private Color[] coresStage = { new Color(146,145,153),new Color(97,255,0),new Color(192,164,157),new Color(89,135,158),new Color(224,227,0),new Color(200,0,5) };
+	private Highscores highscores;
+	private String name;
+		
 	
 	@Override
-	protected void draw(Canvas canvas) {
+	protected void draw(Canvas canvas) {		
 		canvas.clear();
 		canvas.drawImage(imagem,0,0);		
 		drawBlocosStage(canvas);				
@@ -40,6 +43,9 @@ public class Arkanoid extends GraphicApplication {
 
 	@Override
 	protected void setup() {
+		setTitle("Arkanoid");
+		name = JOptionPane.showInputDialog(null, "Digite seu nome:");
+		verifyName();
 		this.setFramesPerSecond(60);
 		this.setResolution(Resolution.MSX);
 		
@@ -90,14 +96,9 @@ public class Arkanoid extends GraphicApplication {
 
 	@Override
 	protected void loop() {
-		verifyStage();
-		if(ball.getLifes() == 0){
-			JOptionPane.showMessageDialog(null,
-				    "Suas vidas chegaram a zero\nFim de jogo.",
-				    "Batatoid",
-				    JOptionPane.ERROR_MESSAGE);	
-			System.exit(0);
-		}
+		verifyLifes();
+		verifyStage();		
+		
 		//Testando os limites do eixo X e Y.
 		Point pos = ball.getPosition();
 		if (testeLimite(pos.y,0,getResolution().height)) {
@@ -110,10 +111,12 @@ public class Arkanoid extends GraphicApplication {
 			
 		}
 		if(ball.isDead(getResolution().height)){
-			ball.DieInsect();
+			ball.LoseLife();
 			ball.setPosition(130,180);
+			paddle.setPosition(100,185);
 		}
-			
+		
+				
 		int bateu = 0;
 		for (int i = 0; i < blocos.length; i++) {
 			if (blocos[i].bateu(ball)) {
@@ -126,7 +129,6 @@ public class Arkanoid extends GraphicApplication {
 			deltaY *= -1;
 		
 		if (paddle.bateu(ball)) {
-			Console.println("Bateu no paddle");
 			deltaY *= -1;
 		}
 		
@@ -134,7 +136,28 @@ public class Arkanoid extends GraphicApplication {
 		
 		redraw();			
 		
-	}	
+	}		
+
+	private void verifyLifes() {
+		if(ball.getLifes() == 0){
+			JOptionPane.showMessageDialog(null,
+				    "Suas vidas chegaram a zero\nFim de jogo.",
+				    "Arkanoid",
+				    JOptionPane.ERROR_MESSAGE);
+			highscores = new Highscores(name,score);
+			JOptionPane.showMessageDialog(null,
+				    "Recordes\n"+highscores.allScores(),
+				    "Arkanoid",
+				    JOptionPane.INFORMATION_MESSAGE);
+			int reply = JOptionPane.showConfirmDialog(null, "Jogar Novamente ?", "Arkanoid", JOptionPane.YES_NO_OPTION);
+	        if (reply == JOptionPane.YES_OPTION) {
+	          gameReset();
+	        }
+	        else {
+	        	System.exit(0);
+	        }			
+		}		
+	}
 
 	private void drawBlocosStage(Canvas canvas) {
 		for (int i = 0; i < blocos.length; i++) {
@@ -172,10 +195,8 @@ public class Arkanoid extends GraphicApplication {
 		}
 	}
 	
-	private void setBlocosStage() {
-				
-		forBlocos(coresStage);	
-		
+	private void setBlocosStage() {				
+		forBlocos(coresStage);			
 	}	
 	
 	private void verifyStage() {
@@ -190,20 +211,41 @@ public class Arkanoid extends GraphicApplication {
 	private void stageAdvance() {
 		stage = stage + 1;
 		ball.setPosition(130,180);
-		shuffleArray(coresStage);
+		shuffleColor(coresStage);
+		deltaY = -1;
+		deltaX = 1;
+		paddle.setPosition(100,185);
 		setBlocosStage();
 	}
 	
-	static void shuffleArray(Color[] ar){
+	private void gameReset() {
+		ball.resetLife();
+		stage = 0;
+		score = 0;
+		ball.setPosition(130,180);
+		shuffleColor(coresStage);
+		deltaY = -1;
+		deltaX = 1;
+		paddle.setPosition(100,185);
+		setBlocosStage();	
+	}
+	
+	static void shuffleColor(Color[] color){
 		Random rnd = ThreadLocalRandom.current();
-		for (int i = ar.length - 1; i > 0; i--){
+		for (int i = color.length - 1; i > 0; i--){
 		  int index = rnd.nextInt(i + 1);
-		      Color a = ar[index];
-		      ar[index] = ar[i];
-		      ar[i] = a;
+		      Color a = color[index];
+		      color[index] = color[i];
+		      color[i] = a;
 		    }
 	  }
-	
+
+	private void verifyName() {
+		if(name == null || name.isEmpty())
+			name = "NoName";
+		Console.println(name);
+	}
+
 	private boolean testeLimite(double pos, int min, int max) {
 		if(pos > max || pos < min) {
 			return true;

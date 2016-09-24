@@ -11,11 +11,15 @@ public class Ball extends Sprite {
 		life = 5;
 	}
 	
+	public void resetLife(){
+		life = 5;
+	}
+	
 	public int getLifes(){
 		return life;
 	}
 	
-	public void DieInsect(){
+	public void LoseLife(){
 		life--;
 	}
 	
@@ -29,7 +33,7 @@ public class Ball extends Sprite {
 		int r = getRaio();
 		return new Point(pos.x + r, pos.y + r);
 	}
-
+	
 	public boolean isDead(int height) {
 		Point pos = getPosition();
 		if(pos.y > height)
