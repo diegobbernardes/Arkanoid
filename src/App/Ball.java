@@ -36,7 +36,7 @@ public class Ball extends Sprite {
 	
 	public boolean isDead(int height) {
 		Point pos = getPosition();
-		if(pos.y > height)
+		if(pos.y > height-2)
 			return true;
 		return false;
 	}

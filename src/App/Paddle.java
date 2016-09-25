@@ -1,6 +1,5 @@
 package App;
 
-import com.senac.SimpleJava.Console;
 import com.senac.SimpleJava.Graphics.Color;
 import com.senac.SimpleJava.Graphics.Point;
 import com.senac.SimpleJava.Graphics.Rect;
@@ -10,13 +9,37 @@ public class Paddle extends Sprite {
 	
 	public Paddle(){
 		super(40,3, Color.BLUE);
-	}	
+	}
+	
+	public boolean bateuLeft(Ball ball){
+		Point pos=ball.getPosition();
+		int raio=ball.getRaio();		
+		Rect rect=super.getBounds();
+		int left = rect.x;
+		if(pos.x+raio == left) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean bateuRight(Ball ball){
+		Point pos=ball.getPosition();
+		int raio=ball.getRaio();		
+		Rect rect=super.getBounds();
+		int right = rect.x + rect.width;
+		if (pos.x-raio == right) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean bateu(Ball ball){
 		
 		Point pos=ball.getPosition();
 		int raio=ball.getRaio();
 		
-		Rect rect=getBounds();
+		Rect rect=super.getBounds();
+		
 		int top = rect.y;
 		int bottom = rect.y + rect.height;		
 		int left = rect.x;
@@ -35,6 +58,8 @@ public class Paddle extends Sprite {
 		}
 		
 		return true;
+		
+		
 	}
 	public boolean PosxLimiteMaximo(int width) {
 		Point pos = this.getPosition();

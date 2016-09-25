@@ -2,7 +2,6 @@ package App;
 
 import com.senac.SimpleJava.Graphics.Canvas;
 import com.senac.SimpleJava.Graphics.Color;
-import com.senac.SimpleJava.Graphics.Image;
 import com.senac.SimpleJava.Graphics.Point;
 import com.senac.SimpleJava.Graphics.Rect;
 import com.senac.SimpleJava.Graphics.Sprite;

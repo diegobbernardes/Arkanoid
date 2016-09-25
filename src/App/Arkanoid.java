@@ -12,6 +12,7 @@ import com.senac.SimpleJava.Graphics.Color;
 import com.senac.SimpleJava.Graphics.GraphicApplication;
 import com.senac.SimpleJava.Graphics.Image;
 import com.senac.SimpleJava.Graphics.Point;
+import com.senac.SimpleJava.Graphics.Rect;
 import com.senac.SimpleJava.Graphics.Resolution;
 import com.senac.SimpleJava.Graphics.Sprite;
 import com.senac.SimpleJava.Graphics.events.KeyboardAction;
@@ -80,7 +81,7 @@ public class Arkanoid extends GraphicApplication {
 				else
 					paddle.move(5, 0);
 			}
-		});
+		});		
 		bindKeyPressed("UP", new KeyboardAction() {
 			@Override
 			public void handleEvent() {
@@ -107,16 +108,11 @@ public class Arkanoid extends GraphicApplication {
 		if (testeLimite(pos.x,0,getResolution().width)) {
 			deltaX *= -1;
 		}
-		if(ball.getLifes() == 0){
-			
-		}
 		if(ball.isDead(getResolution().height)){
 			ball.LoseLife();
 			ball.setPosition(130,180);
 			paddle.setPosition(100,185);
-		}
-		
-				
+		}				
 		int bateu = 0;
 		for (int i = 0; i < blocos.length; i++) {
 			if (blocos[i].bateu(ball)) {
@@ -129,8 +125,11 @@ public class Arkanoid extends GraphicApplication {
 			deltaY *= -1;
 		
 		if (paddle.bateu(ball)) {
+			if(paddle.bateuLeft(ball)||paddle.bateuRight(ball)){
+				deltaX *= -1;
+			}
 			deltaY *= -1;
-		}
+		}		
 		
 		ball.move(deltaX, deltaY);
 		
@@ -175,16 +174,16 @@ public class Arkanoid extends GraphicApplication {
 		canvas.putText(210, 0, 10, ""+score);			
 	}
 	
-	private void forBlocos(Color[] cores) {
+	private void setBlocosStage() {	
 		int k = 0;
 		int posBlocox = 15;
 		int posBlocoy = 0;
 		for (int i = 0; i <= 5; i++){
 			for (int j = 0; j < 13; j++) {
 				if(i == 0){
-					blocos[k] = new Bloco(cores[i],2);
+					blocos[k] = new Bloco(coresStage[i],2);
 				}else{
-					blocos[k] = new Bloco(cores[i]);
+					blocos[k] = new Bloco(coresStage[i]);
 				}
 				blocos[k].setPosition(posBlocoy,posBlocox);				
 				k++;
@@ -192,11 +191,7 @@ public class Arkanoid extends GraphicApplication {
 			}
 			posBlocoy = 0;
 			posBlocox = posBlocox + 12;
-		}
-	}
-	
-	private void setBlocosStage() {				
-		forBlocos(coresStage);			
+		}	
 	}	
 	
 	private void verifyStage() {
